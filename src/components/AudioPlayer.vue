@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col w-full items-center py-6">
+  <div class="audio-player">
     <div class="btn-play bg-gray-300 relative" @click="togglePlayer">
       <img
         :src="option.coverImage"
@@ -56,14 +56,8 @@
       </div>
     </div>
     <div class="flex mt-2">
-      <img
-        class="btn btn-15s"
-        @click="seekTo(-15)"
-      />
-      <img
-        class="btn btn-15s ml-20"
-        @click="seekTo(15)"
-      />
+      <img class="btn btn-15s" @click="seekTo(-15)" />
+      <img class="btn btn-15s ml-20" @click="seekTo(15)" />
     </div>
     <audio
       ref="audioPlayer"
@@ -274,6 +268,9 @@ export default defineComponent({
 })
 </script>
 <style scoped>
+.audio-player {
+  background: red;
+}
 .btn-play {
   @apply w-32 h-32 rounded-full;
 }

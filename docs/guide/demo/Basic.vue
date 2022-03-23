@@ -6,3 +6,6 @@
     }"
   />
 </template>
+<script setup lang="ts">
+import AudioPlayer from '../../../src'
+</script>
