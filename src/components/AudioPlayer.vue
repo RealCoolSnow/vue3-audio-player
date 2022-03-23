@@ -2,8 +2,8 @@
   <div class="flex flex-col w-full items-center py-6">
     <div class="btn-play bg-gray-300 relative" @click="togglePlayer">
       <img
-        :src="cover"
-        :class="`btn-play ${state.playing ? 'animate-spin-slow' : ''}`"
+        :src="option.coverImage"
+        :class="`btn-play ${isPlaying ? 'animate-spin-slow' : ''}`"
       />
       <div
         class="
@@ -20,9 +20,7 @@
         "
       >
         <img
-          :src="`/images/book_qr/ic_${
-            state.playing ? 'pause' : 'play'
-          }_black.png`"
+          :src="`/images/book_qr/ic_${isPlaying ? 'pause' : 'play'}_black.png`"
           class="w-12 h-12"
         />
       </div>
@@ -37,15 +35,15 @@
           ref="audioProgress"
           class="audio__progress"
           :style="{
-            backgroundColor: themeColor,
+            backgroundColor: option.progressBarColor,
           }"
         />
         <div
           ref="audioProgressPoint"
           class="audio__progress-point"
           :style="{
-            backgroundColor: themeColor,
-            boxShadow: `0 0 10px 0 ${themeColor}`,
+            backgroundColor: option.indicatorColor,
+            boxShadow: `0 0 10px 0 ${option.indicatorColor}`,
           }"
           @panstart="handleProgressPanstart"
           @panend="handleProgressPanend"
@@ -53,30 +51,28 @@
         />
       </div>
       <div class="flex text-gray_text text-sm mt-2">
-        <span>{{ formatTime(state.currentTime) }}</span>
-        <span class="ml-auto">{{ formatTime(state.totalTime) }}</span>
+        <span>{{ formatTime(currentTime) }}</span>
+        <span class="ml-auto">{{ formatTime(totalTime) }}</span>
       </div>
     </div>
+    <div class="flex mt-2">
+      <img
+        class="btn btn-15s"
+        @click="seekTo(-15)"
+      />
+      <img
+        class="btn btn-15s ml-20"
+        @click="seekTo(15)"
+      />
+    </div>
     <audio
-      ref="player"
-      :src="src"
+      ref="audioPlayer"
+      :src="option.src"
       :onended="onAudioEnded"
       :onplay="onAudioPlay"
       :onpause="onAudioPause"
       @loadedmetadata="onLoadMetaData"
     ></audio>
-    <div class="flex mt-2">
-      <img
-        src="/images/book_qr/ic_15s_b.png"
-        class="btn btn-15s"
-        @click="seekTo(-15)"
-      />
-      <img
-        src="/images/book_qr/ic_15s_f.png"
-        class="btn btn-15s ml-20"
-        @click="seekTo(15)"
-      />
-    </div>
   </div>
 </template>
 <script lang="ts">
@@ -85,30 +81,30 @@ import {
   nextTick,
   onMounted,
   onUnmounted,
+  PropType,
   reactive,
   ref,
+  toRefs,
 } from 'vue'
 import Core from '@any-touch/core'
 import Pan from '@any-touch/pan'
+import { AudioPlayerOption } from './types'
 
 export default defineComponent({
   props: {
-    src: {
-      type: String,
-      default: '',
-    },
-    cover: {
-      type: String,
-      default: '',
-    },
-    themeColor: {
-      type: String,
-      default: '#3C91F4',
+    option: {
+      type: Object as PropType<AudioPlayerOption>,
+      default: {
+        src: '',
+        coverImage: '',
+        progressBarColor: '#999999',
+        indicatorColor: '#3C91F4',
+      },
     },
   },
   emits: ['ended', 'play', 'pause'],
   setup(props, { emit }) {
-    const player = ref()
+    const audioPlayer = ref()
     const audioProgressWrap = ref()
     const audioProgressPoint = ref()
     const audioProgress = ref()
@@ -116,19 +112,20 @@ export default defineComponent({
     let at: any = null
     let timer: any = null
     const state = reactive({
-      playing: false,
+      option: props.option,
+      isPlaying: false,
+      isDragging: false,
       currentTime: 0,
       totalTime: 0,
-      isDragging: false,
     })
     const playing = () => {
       if (state.isDragging) {
         return
       }
       const offsetLeft =
-        (player.value.currentTime / player.value.duration) *
+        (audioPlayer.value.currentTime / audioPlayer.value.duration) *
         audioProgressWrap.value.offsetWidth
-      state.currentTime = player.value.currentTime
+      state.currentTime = audioPlayer.value.currentTime
       audioProgress.value.style.width = `${offsetLeft}px`
       setPointPosition(offsetLeft)
     }
@@ -156,19 +153,19 @@ export default defineComponent({
     }
     const onAudioEnded = () => {
       console.log('onAudioEnded')
-      state.playing = false
+      state.isPlaying = false
       clearTimer()
       emit('ended')
     }
     const onAudioPause = () => {
       console.log('onAudioPause')
-      state.playing = false
+      state.isPlaying = false
       clearTimer()
       emit('pause')
     }
     const onAudioPlay = () => {
       console.log('onAudioPlay')
-      state.playing = true
+      state.isPlaying = true
       emit('play')
     }
     const onLoadMetaData = (e: any) => {
@@ -176,41 +173,40 @@ export default defineComponent({
       state.totalTime = e.target.duration
     }
     const play = (src: any = null) => {
-      if (src) player.value.src = src
-      // props.source = src || 'https://z70resources.renaissance.cn/Scripts/audio/bell.mp3'
-      player.value.play()
+      if (src) audioPlayer.value.src = src
+      audioPlayer.value.play()
       startTimer()
     }
     const togglePlayer = () => {
-      if (state.playing) {
-        player.value.pause()
+      if (state.isPlaying) {
+        audioPlayer.value.pause()
       } else {
         play()
       }
     }
     const seekTo = (second: number) => {
-      const current = player.value.currentTime + second
-      player.value.currentTime =
+      const current = audioPlayer.value.currentTime + second
+      audioPlayer.value.currentTime =
         // eslint-disable-next-line no-nested-ternary
         current < 0 ? -1 : current > state.totalTime ? state.totalTime : current
-      state.currentTime = player.value.currentTime
+      state.currentTime = audioPlayer.value.currentTime
     }
-    const setPointPosition = (offsetLeft) => {
+    const setPointPosition = (offsetLeft: number) => {
       audioProgressPoint.value.style.left = `${
         offsetLeft - audioProgressPoint.value.offsetWidth / 2
       }px`
     }
-    const handleProgressPanstart = (event) => {
+    const handleProgressPanstart = (event: any) => {
       state.isDragging = true
     }
 
-    const handleProgressPanend = (event) => {
-      player.value.currentTime = state.currentTime
+    const handleProgressPanend = (event: any) => {
+      audioPlayer.value.currentTime = state.currentTime
       play()
       state.isDragging = false
     }
 
-    const handleProgressPanmove = (event) => {
+    const handleProgressPanmove = (event: any) => {
       // if (this.disabledProgressDrag) return
       const pageX = event.x
       const bcr = event.target.getBoundingClientRect()
@@ -223,7 +219,7 @@ export default defineComponent({
       state.currentTime =
         (offsetLeft / audioProgressWrap.value.offsetWidth) * state.totalTime
     }
-    const handleClickProgressWrap = (event) => {
+    const handleClickProgressWrap = (event: any) => {
       const { offsetX } = event
       if (event.target === audioProgressPoint.value) {
         return
@@ -231,7 +227,7 @@ export default defineComponent({
       // 设置当前播放位置
       state.currentTime =
         (offsetX / audioProgressWrap.value.offsetWidth) * state.totalTime
-      player.value.currentTime = state.currentTime
+      audioPlayer.value.currentTime = state.currentTime
       setPointPosition(offsetX)
       // 设置进度条
       audioProgress.value.style.width = `${offsetX}px`
@@ -239,14 +235,16 @@ export default defineComponent({
     }
     onMounted(() => {
       // play()
-      at = new Core(document.getElementById('app'), { preventDefault: false })
+      at = new Core(document.getElementById('app') || undefined, {
+        preventDefault: false,
+      })
       at.use(Pan)
     })
     const pause = () => {
-      player.value.pause()
+      audioPlayer.value.pause()
       nextTick(() => {
         clearTimer()
-        state.playing = false
+        state.isPlaying = false
       })
     }
     onUnmounted(() => {
@@ -254,8 +252,8 @@ export default defineComponent({
       pause()
     })
     return {
-      player,
-      state,
+      audioPlayer,
+      ...toRefs(state),
       onAudioEnded,
       onAudioPlay,
       onAudioPause,
