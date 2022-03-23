@@ -2,6 +2,43 @@
 # yarn lockfile v1
 
 
+"@any-touch/compute@^2.0.2":
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/@any-touch/compute/-/compute-2.0.2.tgz#15acea5a4e0d794698596909a555cbe58c8757e1"
+  integrity sha512-Xm3p+lw82Iw8BnD3r0xE8o2HRS7vWmAgPz485ix6vGaIu1AY6ifa27N59mPMWnEOqfE7QEsfbG7kPGispo7t2A==
+  dependencies:
+    "@any-touch/shared" "^2.0.2"
+    "@any-touch/vector" "^2.0.2"
+    tslib "^2.3.1"
+
+"@any-touch/core@^2.0.2":
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/@any-touch/core/-/core-2.0.2.tgz#0018c2e424ff0681c29982aff988ee2e8f2f5bbf"
+  integrity sha512-RlBsRhlJ5NgKIyf5i0LPylmBnASxOYr9QL7CSWbi7qtZdl7OivSphUAac0tvf4CYyJP/Q76EQ3VzG5pkbqOa+Q==
+  dependencies:
+    "@any-touch/shared" "^2.0.2"
+    any-event "^2.0.2"
+
+"@any-touch/pan@^2.0.2":
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/@any-touch/pan/-/pan-2.0.2.tgz#c19cba7242ea1ace34c26f57d11d5579606f71fa"
+  integrity sha512-oenShT9552diOaDs5kTWcZOrDwTzUDWYXb7rqRrnaI/bzSktWUOzgcbBNsaSjyV+XzNPhrf8zUXCWHcqD1Cvxw==
+  dependencies:
+    "@any-touch/compute" "^2.0.2"
+    "@any-touch/shared" "^2.0.2"
+
+"@any-touch/shared@^2.0.2":
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/@any-touch/shared/-/shared-2.0.2.tgz#760c8b8a48bab0ca8952fdfd3c3cf4d23cb262e1"
+  integrity sha512-rr0kVcPlY8VN/fPGnG8fmGzblbPsQCCYPi9W1WNE9fFFbxyqZcQ3clrZicEwYZM8HXba5xhbHMGz8fmytpbX3Q==
+
+"@any-touch/vector@^2.0.2":
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/@any-touch/vector/-/vector-2.0.2.tgz#30efaa3a3620bbc7280e20217216d94aa9a30514"
+  integrity sha512-YEwU22n8RRfdwSdYLmzDoXgJxWVktCcgovG9tDqksOIO4R7s5KFKQ6uwcv8LcMnqj+0VDXrrS1Pt20eiKesoDA==
+  dependencies:
+    "@any-touch/shared" "^2.0.2"
+
 "@babel/parser@^7.16.4":
   version "7.17.8"
   resolved "https://registry.npmmirror.com/@babel/parser/-/parser-7.17.8.tgz#2817fb9d885dd8132ea0f8eb615a6388cca1c240"
@@ -184,6 +221,13 @@ ansi-styles@^4.1.0:
   integrity sha512-zbB9rCJAT1rbjiVDb2hqKFHNYLxgtk8NURxZ3IZwD3F6NtxbXZQCnnSi1Lkx+IDohdPlFp222wVALIheZJQSEg==
   dependencies:
     color-convert "^2.0.1"
+
+any-event@^2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/any-event/-/any-event-2.0.2.tgz#d013e68512fbc50f7ed4e6a222f2ad26c115ca3c"
+  integrity sha512-lHk89tcWTtv5+H2N0+5areYJCxg+34kww566KmWD1itEtLZTLGUdu++tq6/BRM+FaoOXs14ID2HowSMmHli0lg==
+  dependencies:
+    tslib "^2.3.1"
 
 array-differ@^3.0.0:
   version "3.0.0"
@@ -805,6 +849,11 @@ token-stream@1.0.0:
   version "1.0.0"
   resolved "https://registry.npmmirror.com/token-stream/-/token-stream-1.0.0.tgz#cc200eab2613f4166d27ff9afc7ca56d49df6eb4"
   integrity sha512-VSsyNPPW74RpHwR8Fc21uubwHY7wMDeJLys2IX5zJNih+OnAnaifKHo+1LHT7DAdloQ7apeaaWg8l7qnf/TnEg==
+
+tslib@^2.3.1:
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.3.1.tgz#e8a335add5ceae51aa261d32a490158ef042ef01"
+  integrity sha512-77EbyPPpMz+FRFRuAFlWMtmgUWGe9UOG2Z25NqCwiIjRhOf5iKGuzSe5P2w1laq+FkRy4p+PCuVkJSGkzTEKVw==
 
 typescript@^4.5.4:
   version "4.6.2"

@@ -5,7 +5,10 @@ import AudioPlayer from './AudioPlayer.vue'
 </script>
 
 <template>
-  <AudioPlayer />
+  <AudioPlayer
+    src="https://www.joy666.cn/media/sky.mp3"
+    cover="https://www.joy666.cn/media/sky.png"
+  />
 </template>
 
 <style>
