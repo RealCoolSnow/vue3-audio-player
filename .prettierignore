@@ -1,0 +1,9 @@
+build
+dist
+coverage
+*.html
+pnpm-lock.yaml
+pnpm-workspace.yaml
+.editorconfig
+yarn.lock
+build.sh

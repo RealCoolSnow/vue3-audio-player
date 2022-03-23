@@ -1,17 +1,55 @@
 {
   "name": "vue3-audio-player",
-  "private": true,
-  "version": "0.0.0",
+  "version": "0.0.1-3",
+  "private": false,
+  "description": "Vue3 Audio Player",
+  "keywords": [
+    "vue3",
+    "audio",
+    "vue audio player",
+    "vue3 audio player",
+    "audio player"
+  ],
+  "homepage": "https://github.com/RealCoolSnow/vue3-audio-player/blob/main/README.md",
+  "bugs": {
+    "url": "https://github.com/RealCoolSnow/vue3-audio-player/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RealCoolSnow/vue3-audio-player.git"
+  },
+  "license": "MIT",
+  "author": "CoolSnow(coolsnow2020@gmail.com)",
+  "exports": {
+    ".": {
+      "import": "./dist/audio-player.es.js",
+      "require": "./dist/audio-player.umd.js"
+    },
+    "./dist/style.css": {
+      "import": "./dist/style.css",
+      "require": "./dist/style.css"
+    }
+  },
+  "main": "./dist/audio-player.umd.js",
+  "module": "./dist/audio-player.es.js",
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "dev": "vite",
     "build": "vue-tsc --noEmit && vite build",
-    "preview": "vite preview"
+    "dev": "vite",
+    "format": "pretty-quick",
+    "preview": "vite preview",
+    "publish": "npm publish",
+    "sort": "npx sort-package-json \"package.json\""
   },
   "dependencies": {
     "vue": "^3.2.25"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^2.2.0",
+    "prettier": "^2.6.0",
+    "pretty-quick": "^3.1.3",
     "typescript": "^4.5.4",
     "vite": "^2.8.0",
     "vue-tsc": "^0.29.8"
