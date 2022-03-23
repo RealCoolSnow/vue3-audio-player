@@ -1,9 +1,9 @@
 <template>
   <div class="audio-player">
-    <div class="btn-play bg-gray-300 relative" @click="togglePlayer">
+    <div class="audio__player-play" @click="togglePlayer">
       <img
         :src="option.coverImage"
-        :class="`btn-play ${isPlaying ? 'animate-spin-slow' : ''}`"
+        :class="`${isPlaying ? 'animate-spin-slow' : ''}`"
       />
       <div
         class="
@@ -54,10 +54,6 @@
         <span>{{ formatTime(currentTime) }}</span>
         <span class="ml-auto">{{ formatTime(totalTime) }}</span>
       </div>
-    </div>
-    <div class="flex mt-2">
-      <img class="btn btn-15s" @click="seekTo(-15)" />
-      <img class="btn btn-15s ml-20" @click="seekTo(15)" />
     </div>
     <audio
       ref="audioPlayer"
@@ -178,6 +174,7 @@ export default defineComponent({
         play()
       }
     }
+    /*
     const seekTo = (second: number) => {
       const current = audioPlayer.value.currentTime + second
       audioPlayer.value.currentTime =
@@ -185,6 +182,7 @@ export default defineComponent({
         current < 0 ? -1 : current > state.totalTime ? state.totalTime : current
       state.currentTime = audioPlayer.value.currentTime
     }
+    */
     const setPointPosition = (offsetLeft: number) => {
       audioProgressPoint.value.style.left = `${
         offsetLeft - audioProgressPoint.value.offsetWidth / 2
@@ -269,10 +267,21 @@ export default defineComponent({
 </script>
 <style scoped>
 .audio-player {
-  background: red;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
-.btn-play {
-  @apply w-32 h-32 rounded-full;
+.audio__player-play {
+  position: relative;
+}
+.audio__player-play:active,
+.audio__player-play img:active {
+  opacity: 0.75;
+}
+.audio__player-play img {
+  width: 8rem;
+  height: 8rem;
+  border-radius: 9999px;
 }
 .btn-15s {
   @apply w-10 h-10;
