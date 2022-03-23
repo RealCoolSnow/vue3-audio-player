@@ -14,7 +14,14 @@
     "emitDeclarationOnly": true,
     "declarationDir": "./dist/types",
     "isolatedModules": true,
-    "skipLibCheck": true,
+    "skipLibCheck": true
   },
-  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue", "src/index.js"]
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue",
+    "src/index.js"
+  ],
+  "exclude": ["src/main.ts", "src/App.vue"]
 }

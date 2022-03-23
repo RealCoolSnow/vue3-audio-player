@@ -10,7 +10,7 @@ export default defineConfig({
       entry: path.resolve(__dirname, 'src/index.ts'),
       name: 'audio-player',
       formats: ['es', 'umd'], // adding 'umd' requires globals set to every external module
-      fileName: (format) => `audio-player.${format}.js`,
+      fileName: (format) => `index.${format}.js`,
     },
     rollupOptions: {
       // external modules won't be bundled into your library

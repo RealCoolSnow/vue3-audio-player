@@ -1,2 +1,2 @@
-import AudioPlayer from './components/AudioPlayer.vue'
+import AudioPlayer from './AudioPlayer.vue'
 export default AudioPlayer
