@@ -139,6 +139,7 @@ export default defineComponent({
     const startTimer = () => {
       clearTimer()
       timer = window.setInterval(playUpdate, progressInterval)
+      state.isPlaying = true
     }
     const clearTimer = () => {
       if (timer) {
@@ -151,6 +152,7 @@ export default defineComponent({
         .play()
         .then(() => {
           startTimer()
+          setTotalTime(audioPlayer.value.duration)
         })
         .catch((error: any) => {
           emit('play-error', error)
@@ -158,6 +160,7 @@ export default defineComponent({
     }
     const pause = () => {
       audioPlayer.value.pause()
+      state.isPlaying = false
     }
     const togglePlayer = () => {
       if (state.isPlaying) {
@@ -166,24 +169,30 @@ export default defineComponent({
         play()
       }
     }
-
+    const setTotalTime = (seconds: number) => {
+      state.totalTime = seconds
+      state.totalTimeStr = formatSecond(state.totalTime)
+    }
     const onAudioEnded = () => {
+      console.log('onAudioEnded')
       state.isPlaying = false
       clearTimer()
       emit('ended')
     }
     const onAudioPause = () => {
+      console.log('onAudioPause')
       state.isPlaying = false
       clearTimer()
       emit('pause')
     }
     const onAudioPlay = () => {
+      console.log('onAudioPlay')
       state.isPlaying = true
       emit('play')
     }
     const onLoadMetaData = (e: any) => {
-      state.totalTime = e.target.duration
-      state.totalTimeStr = formatSecond(state.totalTime)
+      console.log('onLoadMetaData', e)
+      setTotalTime(e.target.duration)
       emit('loadedmetadata', e)
     }
     const onTimeUpdate = (event: any) => {
