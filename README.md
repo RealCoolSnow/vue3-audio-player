@@ -68,3 +68,11 @@ Here are some `method`s about `AudioPlayer`:
 play() // play the audio
 pause() // pause the audio
 ```
+
+Here are some `property`s about `AudioPlayer`:
+
+```ts
+totalTime // total time of the audio (seconds)
+currentTime // current time of the audio (seconds)
+isPlaying // boolean
+```
