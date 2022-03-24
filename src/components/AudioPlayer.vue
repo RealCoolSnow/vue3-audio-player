@@ -159,6 +159,9 @@ export default defineComponent({
     const pause = () => {
       audioPlayer.value.pause()
     }
+    const isPlaying = () => {
+      return state.isPlaying
+    }
     const togglePlayer = () => {
       if (state.isPlaying) {
         pause()
@@ -262,6 +265,7 @@ export default defineComponent({
       onTimeUpdate,
       play,
       pause,
+      isPlaying,
       togglePlayer,
       formatSecond,
       handleProgressPanStart,
