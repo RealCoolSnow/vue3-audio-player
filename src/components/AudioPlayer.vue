@@ -46,9 +46,9 @@
     <audio
       ref="audioPlayer"
       :src="option_.src"
-      :onended="onAudioEnded"
-      :onplay="onAudioPlay"
-      :onpause="onAudioPause"
+      @ended="onAudioEnded"
+      @play="onAudioPlay"
+      @pause="onAudioPause"
       @loadedmetadata="onLoadMetaData"
       @timeupdate="onTimeUpdate"
     ></audio>
