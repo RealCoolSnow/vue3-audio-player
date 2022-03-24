@@ -35,6 +35,7 @@
   ],
   "scripts": {
     "build": "rimraf dist && vue-tsc && vite build",
+    "deploy-gh": "sh scripts/deploy-gh.sh",
     "dev": "vite",
     "docs:build": "vitepress build docs",
     "docs:dev": "vitepress dev docs",
