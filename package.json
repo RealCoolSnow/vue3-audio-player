@@ -42,7 +42,7 @@
     "docs:serve": "vitepress serve docs --port 3005",
     "format": "pretty-quick",
     "preview": "vite preview",
-    "publish": "npm publish",
+    "pub": "yarn build && yarn publish",
     "sort": "npx sort-package-json \"package.json\""
   },
   "dependencies": {
