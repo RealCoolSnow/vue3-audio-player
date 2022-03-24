@@ -67,5 +67,4 @@ Here are some `method`s about `AudioPlayer`:
 ```ts
 play() // play the audio
 pause() // pause the audio
-isPlaying() : boolean // if the audio is playing
 ```
