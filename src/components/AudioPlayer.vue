@@ -40,9 +40,7 @@
         />
       </div>
       <div class="audio__player-time">
-        <span>{{
-          `${formatSecond(currentTime)} / ${formatSecond(totalTime)}`
-        }}</span>
+        <span>{{ `${formatSecond(currentTime)} / ${totalTimeStr}` }}</span>
       </div>
     </div>
     <audio
@@ -122,6 +120,7 @@ export default defineComponent({
       isDragging: false,
       currentTime: 0,
       totalTime: 0,
+      totalTimeStr: '00:00',
     })
 
     const playUpdate = () => {
@@ -183,6 +182,7 @@ export default defineComponent({
     }
     const onLoadMetaData = (e: any) => {
       state.totalTime = e.target.duration
+      state.totalTimeStr = formatSecond(state.totalTime)
       emit('loadedmetadata', e)
     }
     const onTimeUpdate = (event: any) => {
