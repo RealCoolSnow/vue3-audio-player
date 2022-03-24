@@ -6,7 +6,7 @@ import Basic from './guide/demo/Basic.vue'
 
 This is a beautiful Audio Player Component for Vue3.
 
-## Example
+## Live Demo
 
 <DemoContainer>
   <Basic/>
