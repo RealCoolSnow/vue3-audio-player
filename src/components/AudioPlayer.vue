@@ -1,63 +1,49 @@
 <template>
-  <div class="audio-player">
+  <div class="audio__player">
     <div class="audio__player-play" @click="togglePlayer">
       <img
-        :src="option.coverImage"
-        :class="`${isPlaying ? 'animate-spin-slow' : ''}`"
+        :src="option_.coverImage"
+        :class="`${
+          isPlaying && option_.coverRotate ? 'audio__player-spin-anim' : ''
+        }`"
       />
-      <div
-        class="
-          flex
-          item-center
-          justify-content
-          bg-white
-          rounded-full
-          absolute
-          top-8
-          left-8
-          btn
-          p-2
-        "
-      >
-        <img
-          :src="`/images/book_qr/ic_${isPlaying ? 'pause' : 'play'}_black.png`"
-          class="w-12 h-12"
-        />
+      <div class="audio__player-play-icon">
+        <img :src="isPlaying ? IconPause : IconPlay" />
       </div>
     </div>
-    <div class="flex flex-col w-4/5">
+    <div class="audio__player-progress-container">
       <div
         ref="audioProgressWrap"
-        class="audio__progress-wrap"
+        class="audio__player-progress-wrap"
         @click.stop="handleClickProgressWrap"
       >
         <div
           ref="audioProgress"
-          class="audio__progress"
+          class="audio__player-progress"
           :style="{
-            backgroundColor: option.progressBarColor,
+            backgroundColor: option_.progressBarColor,
           }"
         />
         <div
           ref="audioProgressPoint"
-          class="audio__progress-point"
+          class="audio__player-progress-point"
           :style="{
-            backgroundColor: option.indicatorColor,
-            boxShadow: `0 0 10px 0 ${option.indicatorColor}`,
+            backgroundColor: option_.indicatorColor,
+            boxShadow: `0 0 10px 0 ${option_.indicatorColor}`,
           }"
-          @panstart="handleProgressPanstart"
-          @panend="handleProgressPanend"
-          @panmove="handleProgressPanmove"
+          @panstart="handleProgressPanStart"
+          @panend="handleProgressPanEnd"
+          @panmove="handleProgressPanMove"
         />
       </div>
       <div class="flex text-gray_text text-sm mt-2">
-        <span>{{ formatTime(currentTime) }}</span>
-        <span class="ml-auto">{{ formatTime(totalTime) }}</span>
+        <span>{{ formatSecond(currentTime) }}</span>
+        <span class="ml-auto">{{ formatSecond(totalTime) }}</span>
       </div>
     </div>
     <audio
       ref="audioPlayer"
-      :src="option.src"
+      :src="option_.src"
       :onended="onAudioEnded"
       :onplay="onAudioPlay"
       :onpause="onAudioPause"
@@ -68,28 +54,38 @@
 <script lang="ts">
 import {
   defineComponent,
-  nextTick,
   onMounted,
   onUnmounted,
   PropType,
   reactive,
   ref,
   toRefs,
+  watch,
 } from 'vue'
 import Core from '@any-touch/core'
 import Pan from '@any-touch/pan'
-import { AudioPlayerOption } from './types'
+import { AudioPlayerOption, AudioPlayerOptionDefault } from './types'
+import { formatSecond } from '../utils/util'
+import IconPlay from '../assets/images/play.png'
+import IconPause from '../assets/images/pause.png'
+
+const mergeOption = (option: AudioPlayerOption): AudioPlayerOption => {
+  return {
+    src: option.src || AudioPlayerOptionDefault.src,
+    coverImage: option.coverImage || AudioPlayerOptionDefault.coverImage,
+    coverRotate: option.coverRotate || AudioPlayerOptionDefault.coverRotate,
+    progressBarColor:
+      option.progressBarColor || AudioPlayerOptionDefault.progressBarColor,
+    indicatorColor:
+      option.indicatorColor || AudioPlayerOptionDefault.indicatorColor,
+  }
+}
 
 export default defineComponent({
   props: {
     option: {
       type: Object as PropType<AudioPlayerOption>,
-      default: {
-        src: '',
-        coverImage: '',
-        progressBarColor: '#999999',
-        indicatorColor: '#3C91F4',
-      },
+      default: AudioPlayerOptionDefault,
     },
   },
   emits: ['ended', 'play', 'pause'],
@@ -99,16 +95,17 @@ export default defineComponent({
     const audioProgressPoint = ref()
     const audioProgress = ref()
     const progressInterval = 200
-    let at: any = null
+    const option_ = ref(mergeOption(props.option))
+    let toucher: any = null
     let timer: any = null
     const state = reactive({
-      option: props.option,
       isPlaying: false,
       isDragging: false,
       currentTime: 0,
       totalTime: 0,
     })
-    const playing = () => {
+
+    const playUpdate = () => {
       if (state.isDragging) {
         return
       }
@@ -119,87 +116,67 @@ export default defineComponent({
       audioProgress.value.style.width = `${offsetLeft}px`
       setPointPosition(offsetLeft)
     }
-
+    const startTimer = () => {
+      clearTimer()
+      timer = window.setInterval(playUpdate, progressInterval)
+    }
     const clearTimer = () => {
       if (timer) {
         window.clearInterval(timer)
         timer = null
       }
     }
-    const startTimer = () => {
-      clearTimer()
-      timer = window.setInterval(playing, progressInterval)
-    }
-    const formatTime = (second: number) => {
-      let hour_str = `${Math.floor(second / 60)}`
-      let second_str = `${Math.ceil(second % 60)}`
-      if (hour_str.length === 1) {
-        hour_str = `0${hour_str}`
-      }
-      if (second_str.length === 1) {
-        second_str = `0${second_str}`
-      }
-      return `${hour_str}:${second_str}`
-    }
-    const onAudioEnded = () => {
-      console.log('onAudioEnded')
-      state.isPlaying = false
-      clearTimer()
-      emit('ended')
-    }
-    const onAudioPause = () => {
-      console.log('onAudioPause')
-      state.isPlaying = false
-      clearTimer()
-      emit('pause')
-    }
-    const onAudioPlay = () => {
-      console.log('onAudioPlay')
-      state.isPlaying = true
-      emit('play')
-    }
-    const onLoadMetaData = (e: any) => {
-      console.log('onLoadMetaData', e)
-      state.totalTime = e.target.duration
-    }
     const play = (src: any = null) => {
       if (src) audioPlayer.value.src = src
       audioPlayer.value.play()
       startTimer()
     }
+    const pause = () => {
+      audioPlayer.value.pause()
+    }
     const togglePlayer = () => {
       if (state.isPlaying) {
-        audioPlayer.value.pause()
+        pause()
       } else {
         play()
       }
     }
-    /*
-    const seekTo = (second: number) => {
-      const current = audioPlayer.value.currentTime + second
-      audioPlayer.value.currentTime =
-        // eslint-disable-next-line no-nested-ternary
-        current < 0 ? -1 : current > state.totalTime ? state.totalTime : current
-      state.currentTime = audioPlayer.value.currentTime
+
+    const onAudioEnded = () => {
+      state.isPlaying = false
+      clearTimer()
+      emit('ended')
     }
-    */
+    const onAudioPause = () => {
+      state.isPlaying = false
+      clearTimer()
+      emit('pause')
+    }
+    const onAudioPlay = () => {
+      state.isPlaying = true
+      emit('play')
+    }
+    const onLoadMetaData = (e: any) => {
+      state.totalTime = e.target.duration
+      console.log('onLoadMetaData', e)
+    }
+
     const setPointPosition = (offsetLeft: number) => {
       audioProgressPoint.value.style.left = `${
         offsetLeft - audioProgressPoint.value.offsetWidth / 2
       }px`
     }
-    const handleProgressPanstart = (event: any) => {
+    const handleProgressPanStart = (event: any) => {
       state.isDragging = true
     }
 
-    const handleProgressPanend = (event: any) => {
+    const handleProgressPanEnd = (event: any) => {
       audioPlayer.value.currentTime = state.currentTime
       play()
       state.isDragging = false
     }
 
-    const handleProgressPanmove = (event: any) => {
-      // if (this.disabledProgressDrag) return
+    const handleProgressPanMove = (event: any) => {
       const pageX = event.x
       const bcr = event.target.getBoundingClientRect()
       const targetLeft = parseInt(getComputedStyle(event.target).left)
@@ -216,35 +193,35 @@ export default defineComponent({
       if (event.target === audioProgressPoint.value) {
         return
       }
-      // 设置当前播放位置
       state.currentTime =
         (offsetX / audioProgressWrap.value.offsetWidth) * state.totalTime
       audioPlayer.value.currentTime = state.currentTime
       setPointPosition(offsetX)
-      // 设置进度条
       audioProgress.value.style.width = `${offsetX}px`
       play()
     }
+    watch(
+      () => props.option,
+      (newValue, oldValue) => {
+        option_.value = mergeOption(newValue)
+      },
+      { deep: true },
+    )
     onMounted(() => {
-      // play()
-      at = new Core(document.getElementById('app') || undefined, {
+      toucher = new Core(document.getElementById('app') || undefined, {
         preventDefault: false,
       })
-      at.use(Pan)
+      toucher.use(Pan)
     })
-    const pause = () => {
-      audioPlayer.value.pause()
-      nextTick(() => {
-        clearTimer()
-        state.isPlaying = false
-      })
-    }
+
     onUnmounted(() => {
-      if (at) at.destroy()
+      if (toucher) toucher.destroy()
       pause()
     })
+
     return {
       audioPlayer,
+      option_,
       ...toRefs(state),
       onAudioEnded,
       onAudioPlay,
@@ -252,21 +229,22 @@ export default defineComponent({
       onLoadMetaData,
       play,
       togglePlayer,
-      formatTime,
-      seekTo,
-      handleProgressPanstart,
-      handleProgressPanend,
-      handleProgressPanmove,
+      formatSecond,
+      handleProgressPanStart,
+      handleProgressPanEnd,
+      handleProgressPanMove,
       handleClickProgressWrap,
       audioProgressWrap,
       audioProgressPoint,
       audioProgress,
+      IconPlay,
+      IconPause,
     }
   },
 })
 </script>
 <style scoped>
-.audio-player {
+.audio__player {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -279,27 +257,34 @@ export default defineComponent({
   opacity: 0.75;
 }
 .audio__player-play img {
-  width: 8rem;
-  height: 8rem;
+  width: 6.8rem;
+  height: 6.8rem;
   border-radius: 9999px;
 }
-.btn-15s {
-  @apply w-10 h-10;
+.audio__player-play-icon {
+  position: absolute;
+  top: 1.8rem;
+  left: 1.8rem;
+  background: #f0f0f0;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 0.5rem;
+  opacity: 0.8;
 }
-.progress {
-  @apply mt-6 mb-1 w-full relative;
+.audio__player-play-icon img {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 9999px;
 }
-.progress div {
-  @apply h-1 bg-gray-200 w-full rounded;
+
+.audio__player-progress-container {
+  display: flex;
+  flex-direction: column;
+  width: 80%;
 }
-.progress label {
-  @apply bg-gray-400 rounded-full absolute left-0;
-  height: 0.8rem;
-  width: 0.8rem;
-  margin-top: -0.5rem;
-  left: 0%;
-}
-.audio__progress-wrap {
+
+.audio__player-progress-wrap {
   position: relative;
   background: #ddd;
   height: 4px;
@@ -311,7 +296,7 @@ export default defineComponent({
   -webkit-user-drag: none;
 }
 
-.audio__progress {
+.audio__player-progress {
   position: absolute;
   left: 0;
   top: 0;
@@ -320,7 +305,7 @@ export default defineComponent({
   border-radius: 3px;
 }
 
-.audio__progress-point {
+.audio__player-progress-point {
   position: absolute;
   left: -8px;
   top: 50%;
@@ -330,7 +315,7 @@ export default defineComponent({
   margin-top: -8px;
 }
 
-.audio__progress-point:after {
+.audio__player-progress-point:after {
   content: '';
   position: absolute;
   top: 50%;
@@ -340,5 +325,16 @@ export default defineComponent({
   margin: -4px 0 0 -4px;
   background: #fff;
   border-radius: 50%;
+}
+@keyframes audio__player-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+.audio__player-spin-anim {
+  animation: audio__player-spin 5s linear infinite;
 }
 </style>
