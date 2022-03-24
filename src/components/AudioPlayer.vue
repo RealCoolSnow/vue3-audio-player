@@ -57,6 +57,7 @@
 <script lang="ts">
 import {
   defineComponent,
+  nextTick,
   onMounted,
   onUnmounted,
   PropType,
@@ -236,6 +237,9 @@ export default defineComponent({
       () => props.option,
       (newValue, oldValue) => {
         option_.value = mergeOption(newValue)
+        nextTick(() => {
+          play()
+        })
       },
       { deep: true },
     )
