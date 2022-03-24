@@ -3,6 +3,7 @@ const path = require('path')
 module.exports = {
   title: 'Vue3 Audio Player',
   description: 'This is a beautiful Audio Player Component for Vue3.',
+  base: '/vue3-audio-player/',
   themeConfig: {
     repo: 'https://github.com/RealCoolSnow/vue3-audio-player',
     sidebar: [
