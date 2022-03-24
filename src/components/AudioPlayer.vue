@@ -96,17 +96,17 @@ export default defineComponent({
     },
   },
   emits: [
-    'pause',
-    'timeupdate',
     'loadedmetadata',
+    'playing',
+    'play',
+    'play-error',
+    'timeupdate',
+    'pause',
     'ended',
     'progress-start',
     'progress-end',
     'progress-move',
     'progress-click',
-    'playing',
-    'play',
-    'play-error',
   ],
   setup(props, { emit }) {
     const audioPlayer = ref()

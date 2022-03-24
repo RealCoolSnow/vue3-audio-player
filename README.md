@@ -2,6 +2,10 @@
 
 This is a beautiful Audio Player Component for Vue3.
 
+<p align="center">
+    <img src="/screenshot/screen1.png" />
+</p>
+
 # Installation
 
 ```bash
@@ -27,4 +31,33 @@ In your `template`:
         coverImage: 'https://your-cover-image.png',
    }" />
 </template>
+```
+
+Here are some `option`s about `AudioPlayer`:
+
+```ts
+ AudioPlayerOption {
+  src: string //audio source
+  title?: string //audio title (optional, default: '')
+  coverImage?: string //cover image (optional, default: '')
+  coverRotate?: boolean //cover rotate when playing (optional, default: true)
+  progressBarColor?: string //progress bar color (optional, default: '#3C91F4')
+  indicatorColor?: string //indicator color (optional, default: '#3C91F4')
+}
+```
+
+Here are some `event`s about `AudioPlayer`:
+
+```ts
+'loadedmetadata'
+'playing'
+'play'
+'play-error'
+'timeupdate'
+'pause'
+'ended'
+'progress-start'
+'progress-end'
+'progress-move'
+'progress-click'
 ```
