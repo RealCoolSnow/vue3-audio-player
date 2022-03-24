@@ -1,5 +1,6 @@
 export interface AudioPlayerOption {
   src: string //audio source
+  title?: string //audio title
   coverImage?: string //cover image
   coverRotate?: boolean //cover rotate when playing
   progressBarColor?: string //progress bar color
@@ -8,6 +9,7 @@ export interface AudioPlayerOption {
 
 export const AudioPlayerOptionDefault: AudioPlayerOption = {
   src: '',
+  title: '',
   coverImage: '',
   coverRotate: true,
   progressBarColor: '#3C91F4',

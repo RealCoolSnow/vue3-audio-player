@@ -8,10 +8,7 @@ module.exports = {
     sidebar: [
       {
         text: 'Introduction',
-        children: [
-          { text: 'What is Vue3 Audio Player?', link: '/' },
-          { text: 'Getting Started', link: '/guide/' },
-        ],
+        children: [{ text: 'Getting Started', link: '/' }],
       },
     ],
   },

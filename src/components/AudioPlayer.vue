@@ -2,7 +2,7 @@
   <div class="audio__player">
     <div class="audio__player-play" @click="togglePlayer">
       <img
-        :src="option_.coverImage"
+        :src="option_.coverImage ? option_.coverImage : CoverImageDefault"
         :class="`${
           isPlaying && option_.coverRotate ? 'audio__player-spin-anim' : ''
         }`"
@@ -10,6 +10,9 @@
       <div class="audio__player-play-icon">
         <img :src="isPlaying ? IconPause : IconPlay" />
       </div>
+    </div>
+    <div v-if="option_.title" class="audio__player-title">
+      {{ option_.title }}
     </div>
     <div class="audio__player-progress-container">
       <div
@@ -36,9 +39,10 @@
           @panmove="handleProgressPanMove"
         />
       </div>
-      <div class="flex text-gray_text text-sm mt-2">
-        <span>{{ formatSecond(currentTime) }}</span>
-        <span class="ml-auto">{{ formatSecond(totalTime) }}</span>
+      <div class="audio__player-time">
+        <span>{{
+          `${formatSecond(currentTime)} / ${formatSecond(totalTime)}`
+        }}</span>
       </div>
     </div>
     <audio
@@ -48,6 +52,7 @@
       :onplay="onAudioPlay"
       :onpause="onAudioPause"
       @loadedmetadata="onLoadMetaData"
+      @timeupdate="onTimeUpdate"
     ></audio>
   </div>
 </template>
@@ -68,10 +73,12 @@ import { AudioPlayerOption, AudioPlayerOptionDefault } from './types'
 import { formatSecond } from '../utils/util'
 import IconPlay from '../assets/images/play.png'
 import IconPause from '../assets/images/pause.png'
+import CoverImageDefault from '../assets/images/cover.png'
 
 const mergeOption = (option: AudioPlayerOption): AudioPlayerOption => {
   return {
     src: option.src || AudioPlayerOptionDefault.src,
+    title: option.title || AudioPlayerOptionDefault.title,
     coverImage: option.coverImage || AudioPlayerOptionDefault.coverImage,
     coverRotate: option.coverRotate || AudioPlayerOptionDefault.coverRotate,
     progressBarColor:
@@ -88,7 +95,19 @@ export default defineComponent({
       default: AudioPlayerOptionDefault,
     },
   },
-  emits: ['ended', 'play', 'pause'],
+  emits: [
+    'pause',
+    'timeupdate',
+    'loadedmetadata',
+    'ended',
+    'progress-start',
+    'progress-end',
+    'progress-move',
+    'progress-click',
+    'playing',
+    'play',
+    'play-error',
+  ],
   setup(props, { emit }) {
     const audioPlayer = ref()
     const audioProgressWrap = ref()
@@ -115,6 +134,7 @@ export default defineComponent({
       state.currentTime = audioPlayer.value.currentTime
       audioProgress.value.style.width = `${offsetLeft}px`
       setPointPosition(offsetLeft)
+      emit('playing')
     }
     const startTimer = () => {
       clearTimer()
@@ -126,10 +146,15 @@ export default defineComponent({
         timer = null
       }
     }
-    const play = (src: any = null) => {
-      if (src) audioPlayer.value.src = src
-      audioPlayer.value.play()
-      startTimer()
+    const play = () => {
+      audioPlayer.value
+        .play()
+        .then(() => {
+          startTimer()
+        })
+        .catch((error: any) => {
+          emit('play-error', error)
+        })
     }
     const pause = () => {
       audioPlayer.value.pause()
@@ -158,9 +183,11 @@ export default defineComponent({
     }
     const onLoadMetaData = (e: any) => {
       state.totalTime = e.target.duration
-      console.log('onLoadMetaData', e)
+      emit('loadedmetadata', e)
     }
-
+    const onTimeUpdate = (event: any) => {
+      emit('timeupdate', event)
+    }
     const setPointPosition = (offsetLeft: number) => {
       audioProgressPoint.value.style.left = `${
         offsetLeft - audioProgressPoint.value.offsetWidth / 2
@@ -168,12 +195,14 @@ export default defineComponent({
     }
     const handleProgressPanStart = (event: any) => {
       state.isDragging = true
+      emit('progress-start', event)
     }
 
     const handleProgressPanEnd = (event: any) => {
       audioPlayer.value.currentTime = state.currentTime
       play()
       state.isDragging = false
+      emit('progress-end', event)
     }
 
     const handleProgressPanMove = (event: any) => {
@@ -187,7 +216,9 @@ export default defineComponent({
       audioProgress.value.style.width = `${offsetLeft}px`
       state.currentTime =
         (offsetLeft / audioProgressWrap.value.offsetWidth) * state.totalTime
+      emit('progress-move', event)
     }
+
     const handleClickProgressWrap = (event: any) => {
       const { offsetX } = event
       if (event.target === audioProgressPoint.value) {
@@ -199,6 +230,7 @@ export default defineComponent({
       setPointPosition(offsetX)
       audioProgress.value.style.width = `${offsetX}px`
       play()
+      emit('progress-click', event)
     }
     watch(
       () => props.option,
@@ -227,7 +259,9 @@ export default defineComponent({
       onAudioPlay,
       onAudioPause,
       onLoadMetaData,
+      onTimeUpdate,
       play,
+      pause,
       togglePlayer,
       formatSecond,
       handleProgressPanStart,
@@ -239,6 +273,7 @@ export default defineComponent({
       audioProgress,
       IconPlay,
       IconPause,
+      CoverImageDefault,
     }
   },
 })
@@ -325,6 +360,21 @@ export default defineComponent({
   margin: -4px 0 0 -4px;
   background: #fff;
   border-radius: 50%;
+}
+.audio__player-time {
+  margin-top: 0.2rem;
+  margin-left: auto;
+}
+.audio__player-time span {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+.audio__player-title {
+  text-align: center;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: bold;
+  color: #3c3c3c;
 }
 @keyframes audio__player-spin {
   from {
