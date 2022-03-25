@@ -261,7 +261,7 @@ export default defineComponent({
 
     onUnmounted(() => {
       if (toucher) toucher.destroy()
-      pause()
+      // pause()
     })
 
     return {
