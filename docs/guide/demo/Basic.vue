@@ -2,9 +2,10 @@
   <div>
     <AudioPlayer :option="option" />
     <div class="my-2 h-1 bg-gray-400 w-full"></div>
-    <div @click="switchAudio" class="mt-6 text-center">
+    <div class="mt-6 text-center">
       <span
         class="w-12 bg-blue-600 py-2 px-6 text-white active:opacity-70 text-sm"
+        @click="switchAudio" 
         >Switch Music</span
       >
     </div>
