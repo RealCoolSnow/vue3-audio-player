@@ -25,11 +25,13 @@ In your `template`:
 
 ```html
 <template>
-   <AudioPlayer :option="{
+  <AudioPlayer
+    :option="{
         src: 'https://your-audio-file.mp3',
         title: 'your-audio-title',
         coverImage: 'https://your-cover-image.png',
-   }" />
+   }"
+  />
 </template>
 ```
 
@@ -75,4 +77,10 @@ Here are some `property`s about `AudioPlayer`:
 totalTime // total time of the audio (seconds)
 currentTime // current time of the audio (seconds)
 isPlaying // boolean
+```
+
+Here are some `slot`s about `AudioPlayer`:
+
+```ts
+title
 ```
