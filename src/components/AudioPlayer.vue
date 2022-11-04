@@ -1,18 +1,24 @@
 <template>
   <div class="audio__player">
-    <div class="audio__player-play" @click="togglePlayer">
-      <img
-        :src="option_.coverImage ? option_.coverImage : CoverImageDefault"
-        :class="`${
-          isPlaying && option_.coverRotate ? 'audio__player-spin-anim' : ''
-        }`"
-      />
-      <div class="audio__player-play-icon">
-        <img :src="isPlaying ? IconPause : IconPlay" />
+    <div class="audio__player-play-and-title">
+      <div class="audio__player-play-cont">
+        <div class="audio__player-play" @click="togglePlayer">
+          <img
+            :src="option_.coverImage ? option_.coverImage : CoverImageDefault"
+            :class="`${
+              isPlaying && option_.coverRotate ? 'audio__player-spin-anim' : ''
+            }`"
+          />
+          <div class="audio__player-play-icon">
+            <img :src="isPlaying ? IconPause : IconPlay" />
+          </div>
+        </div>
       </div>
-    </div>
-    <div v-if="option_.title" class="audio__player-title">
-      {{ option_.title }}
+      <slot name="title">
+        <div v-if="option_.title" class="audio__player-title">
+          {{ option_.title }}
+        </div>
+      </slot>
     </div>
     <div class="audio__player-progress-container">
       <div
