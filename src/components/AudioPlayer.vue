@@ -263,7 +263,6 @@ export default defineComponent({
       (newValue, oldValue) => {
         option_.value = mergeOption(newValue)
         initState()
-        console.log('option_.value', option_.value)
         if (option_.value.autoPlay) {
           nextTick(() => {
             play()
