@@ -84,6 +84,7 @@ const mergeOption = (option: AudioPlayerOption): AudioPlayerOption => {
   return {
     src: option.src || AudioPlayerOptionDefault.src,
     title: option.title || AudioPlayerOptionDefault.title,
+    autoPlay: option.autoPlay || AudioPlayerOptionDefault.autoPlay,
     coverImage: option.coverImage || AudioPlayerOptionDefault.coverImage,
     coverRotate: option.coverRotate || AudioPlayerOptionDefault.coverRotate,
     progressBarColor:
@@ -119,7 +120,7 @@ export default defineComponent({
     const audioProgressPoint = ref()
     const audioProgress = ref()
     const progressInterval = 200
-    const option_ = ref(mergeOption(props.option))
+    const option_ = ref<AudioPlayerOption>(mergeOption(props.option))
     let toucher: any = null
     let timer: any = null
     const state = reactive({
@@ -129,6 +130,15 @@ export default defineComponent({
       totalTime: 0,
       totalTimeStr: '00:00',
     })
+
+    //tips: initialize the state when switch music.
+    const initState = () => {
+      state.isPlaying = false
+      state.isDragging = false
+      state.currentTime = 0
+      state.totalTime = 0
+      state.totalTimeStr = '00:00'
+    }
 
     const playUpdate = () => {
       if (state.isDragging) {
@@ -252,9 +262,12 @@ export default defineComponent({
       () => props.option,
       (newValue, oldValue) => {
         option_.value = mergeOption(newValue)
-        nextTick(() => {
-          play()
-        })
+        initState()
+        if (option_.value.autoPlay) {
+          nextTick(() => {
+            play()
+          })
+        }
       },
       { deep: true },
     )
