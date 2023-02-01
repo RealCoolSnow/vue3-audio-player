@@ -41,6 +41,7 @@ Here are some `option`s about `AudioPlayer`:
  AudioPlayerOption {
   src: string //audio source
   title?: string //audio title (optional, default: '')
+  autoPlay?:boolean //audio automatically play when switch music (optional, default: false)
   coverImage?: string //cover image (optional, default: '')
   coverRotate?: boolean //cover rotate when playing (optional, default: true)
   progressBarColor?: string //progress bar color (optional, default: '#3C91F4')

@@ -190,24 +190,20 @@ export default defineComponent({
       state.totalTimeStr = formatSecond(state.totalTime)
     }
     const onAudioEnded = () => {
-      console.log('onAudioEnded')
       state.isPlaying = false
       clearTimer()
       emit('ended')
     }
     const onAudioPause = () => {
-      console.log('onAudioPause')
       state.isPlaying = false
       clearTimer()
       emit('pause')
     }
     const onAudioPlay = () => {
-      console.log('onAudioPlay')
       state.isPlaying = true
       emit('play')
     }
     const onLoadMetaData = (e: any) => {
-      console.log('onLoadMetaData', e)
       setTotalTime(e.target.duration)
       emit('loadedmetadata', e)
     }
