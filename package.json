@@ -1,6 +1,6 @@
 {
   "name": "vue3-audio-player",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "private": false,
   "description": "A beautiful Audio Player Component for Vue3",
   "keywords": [
